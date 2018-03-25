@@ -1,4 +1,4 @@
-var ilosc_bomb = 1000;
+var ilosc_bomb = 56;
 var czy_1_klikniecie = false;
 var klikniety_kafelek;
 
@@ -84,6 +84,7 @@ function wyznacz_bomby(event) {
     klikniety_kafelek = klikniety_kafelek / 1;
 
     obiekt[klikniety_kafelek].stan = "klikniety";
+	document.getElementById("id" + klikniety_kafelek).style.backgroundColor= "#666";
 
     if (czy_1_klikniecie == false) {
         var unikat;
