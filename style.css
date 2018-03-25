@@ -1,0 +1,47 @@
+body{
+	background-color: #666;
+}
+
+#conteiner{
+	height: 500px;
+	width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #888;
+	
+}
+#pole_na_dane{
+	height: 100%;
+	width: 200px;
+	float: left;
+	background-color: red;
+}
+
+#pole_sapera{
+	height: 100%;
+	width: 600px;
+	float: left;
+	background-color: #aaa;
+}
+
+#pole_z_opcjami{
+	height: 100%;
+	width: 200px;
+	float: left;
+	background-color: red;
+}
+ /* -------------kafelki -----------------*/
+.defa1
+{
+		width:15px;
+		height:15px;
+		background-color:#000;
+		border:1px solid #555;
+		float:left;			
+}
+
+#tu_wstaw_kafelki_sapera{
+	
+	margin-right: auto;
+	margin-left: auto;
+}
