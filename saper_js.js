@@ -1,17 +1,22 @@
-var ilosc_bomb = 56;
+var ilosc_bomb = 2;
 var czy_1_klikniecie = false;
 var klikniety_kafelek;
+var nr_pomoc;
+
+
+document.getElementById("input_button").addEventListener("click", wielkosc_pola);
 
 function wielkosc_pola() {
-    czy_1_klikniecie = false
+    czy_1_klikniecie = false;
     width_x = document.getElementById("width_x").value;
     width_x = width_x / 1;
     height_y = document.getElementById("height_y").value;
     height_y = height_y / 1;
-    // ilosc_bomb = (width_x * height_y)/10;     10% z maksymalnej ilosci bomb
-    if (ilosc_bomb > (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
-    obiekt = new Array(width_x * height_y);
-    tablica_bomb = new Array(width_x * height_y);
+
+    //ilosc_bomb = (width_x * height_y) / 5; //10% z maksymalnej ilosci bomb
+    //  if (ilosc_bomb > (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
+    obiekt = [width_x * height_y];
+    tablica_bomb = [width_x * height_y];
     for (i = 0; i < width_x * height_y; i++) {
         tablica_bomb[i] = 0;
     }
@@ -44,6 +49,7 @@ function wielkosc_pola() {
     margines_pomocniczy = (height_pola_z_kafelkami - width_kafelka * height_y) / 2;
     document.getElementById("tu_wstaw_kafelki_sapera").style.marginTop = margines_pomocniczy + "px";
 
+    //przyznaje każdemu kafelkowi click wyznacz_bomby()
     for (i = 0; i < width_x * height_y; i++) {
         document.getElementById("id" + i).addEventListener("click", wyznacz_bomby);
     }
@@ -53,7 +59,6 @@ function wielkosc_pola() {
     //------------------------------------------------
 
     //------------------------------------------------
-
 
 
 
@@ -84,7 +89,8 @@ function wyznacz_bomby(event) {
     klikniety_kafelek = klikniety_kafelek / 1;
 
     obiekt[klikniety_kafelek].stan = "klikniety";
-	document.getElementById("id" + klikniety_kafelek).style.backgroundColor= "#666";
+
+    document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#666";
 
     if (czy_1_klikniecie == false) {
         var unikat;
@@ -108,6 +114,9 @@ function wyznacz_bomby(event) {
 
     }
     czy_1_klikniecie = true;
+
+    szukaj_pustych_pól(klikniety_kafelek);
+
 }
 
 function umiesc_bomby() { //funkcja testowa
@@ -141,18 +150,27 @@ function wyznacz_numer() {
             obiekt[i + width_x - 1].numer++;
             obiekt[i + width_x].numer++;
             obiekt[i + width_x + 1].numer++;
+            obiekt[i + 1].numer++;
+            obiekt[i - 1].numer++;
+
         } else if (i % width_x == 0 && obiekt[i].bomba == 1) {
             obiekt[i - width_x + 1].numer++;
+            obiekt[i - width_x].numer++;
             obiekt[i + 1].numer++;
             obiekt[i + width_x + 1].numer++;
+            obiekt[i + width_x].numer++;
         } else if ((i + 1) % width_x == 0 && obiekt[i].bomba == 1) {
+            obiekt[i - width_x].numer++;
             obiekt[i - width_x - 1].numer++;
             obiekt[i - 1].numer++;
             obiekt[i + width_x - 1].numer++;
+            obiekt[i + width_x].numer++;
         } else if (i > width_x * (height_y - 1) && i < width_x * height_y - 1 && obiekt[i].bomba == 1) {
             obiekt[i - width_x - 1].numer++;
+            obiekt[i - 1].numer++;
             obiekt[i - width_x].numer++;
             obiekt[i - width_x + 1].numer++;
+            obiekt[i + 1].numer++;
         } else if (obiekt[i].bomba == 1) {
             obiekt[i - width_x - 1].numer++;
             obiekt[i - width_x].numer++;
@@ -175,6 +193,167 @@ function modyfikuj_html() {
     }
 }
 
+function szukaj_pustych_pól(nr_id) {
+    nr_id = nr_id / 1;
+
+
+    if (nr_id == 0) { // tutaj analizować będzie lewy górny róg,  id: większe o 1, większe o width_x oraz większe o width_x + 1
+        //jeżeli id "nr_id + 1" nie ma bomby i numeru to kafel staje się szary, usuwa mu event click, rekurencja szukaj_pustych_pól dla "id + 1"
+        nr_pomoc = nr_id + 1; //analizować będzie id: większe o 1
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id + width_x; //analizować będzie id: większe o szerokość pola
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id + width_x + 1; //analizować będzie id: większe o szerokość pola
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+    } else if (nr_id == width_x - 1) { // tutaj analizować będzie prawy górny róg,  id: mniejsze o 1, większe o width_x oraz większe o width_x - 1
+        nr_pomoc = nr_id - 1; //analizować będzie id: mniejsze o 1
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id + width_x; //analizować będzie id: większe o width_x
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id + width_x - 1; //analizować będzie id: większe o width_x - 1 
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+    } else if (nr_id == width_x * (height_y - 1)) { // tutaj analizować będzie lewy dolny róg,  id: większe o 1, mniejsze o width_x oraz mnijesze o width_x + 1     
+
+        nr_pomoc = nr_id + 1; //analizować będzie id: mniejsze o 1
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id - width_x; //analizować będzie id: większe o width_x
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id - width_x + 1; //analizować będzie id: większe o width_x - 1 
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+    } else if (nr_id == width_x * height_y - 1) { // tutaj analizować będzie prawy dolny róg,  id: mniejsze o 1, mniejsze o width_x oraz mnijesze o width_x - 1     
+        nr_pomoc = nr_id - 1; //analizować będzie id: mniejsze o 1
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id - width_x; //analizować będzie id: większe o width_x
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+
+        nr_pomoc = nr_id - width_x - 1; //analizować będzie id: większe o width_x - 1 
+        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+            szukaj_pustych_pól(nr_pomoc);
+
+        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
+            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        }
+    }
+
+
+}
+
+
 /*
 	na początku wypisuje pole kafelków
 	tworzy obiekty o takich samych właściwościach:
@@ -189,8 +368,13 @@ function modyfikuj_html() {
 	wyznacza bomby, wyznaca numery, modyfikuje obiekty 
 	
 	wzorując się na obiektach zmienia innerHTML
-	}
-*/
+	
+	#rekurencja potrzebna
+	
+	# .button == 2 aby zaznaczało frage, potem znak zapytania
+	
+	
+	*/
 
 
 
