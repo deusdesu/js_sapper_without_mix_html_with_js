@@ -1,4 +1,4 @@
-var ilosc_bomb = 2;
+var ilosc_bomb = 20;
 var czy_1_klikniecie = false;
 var klikniety_kafelek;
 var nr_pomoc;
@@ -14,7 +14,7 @@ function wielkosc_pola() {
     height_y = height_y / 1;
 
     //ilosc_bomb = (width_x * height_y) / 5; //10% z maksymalnej ilosci bomb
-    //  if (ilosc_bomb > (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
+    if (ilosc_bomb - 9 >= (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
     obiekt = [width_x * height_y];
     tablica_bomb = [width_x * height_y];
     for (i = 0; i < width_x * height_y; i++) {
@@ -99,11 +99,12 @@ function wyznacz_bomby(event) {
         for (i = 0; i < ilosc_bomb; i++) {
             for (w = 0; w < 2;) {
                 unikat = Math.floor(Math.random() * width_x * height_y + 0)
-                if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek) {
+                if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek && unikat != klikniety_kafelek - 1 && unikat != klikniety_kafelek - 11 && unikat != klikniety_kafelek - 10 && unikat != klikniety_kafelek - 9 && unikat != klikniety_kafelek + 1 && unikat != klikniety_kafelek + 9 && unikat != klikniety_kafelek + 10 && unikat != klikniety_kafelek + 11) {
                     tablica_bomb[unikat] = tablica_bomb[unikat] + 1;
                     w = 4;
                     //break;
                 }
+				ilosc_powtorzen_w_petli++;
 
             }
             obiekt[unikat].bomba = obiekt[unikat].bomba + 1;
@@ -193,162 +194,81 @@ function modyfikuj_html() {
     }
 }
 
+function czy_jest_bomba_i_numer(nr_pomoc) {
+    if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0 && obiekt[nr_pomoc].stan == "default") {
+        obiekt[nr_pomoc].stan = "wcisniety";
+        document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+        document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        szukaj_pustych_pól(nr_pomoc);
+
+    } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0 && obiekt[nr_pomoc].stan == "default") { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
+        document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
+        document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+        document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+    }
+}
+
+
 function szukaj_pustych_pól(nr_id) {
     nr_id = nr_id / 1;
 
 
     if (nr_id == 0) { // tutaj analizować będzie lewy górny róg,  id: większe o 1, większe o width_x oraz większe o width_x + 1
         //jeżeli id "nr_id + 1" nie ma bomby i numeru to kafel staje się szary, usuwa mu event click, rekurencja szukaj_pustych_pól dla "id + 1"
-        nr_pomoc = nr_id + 1; //analizować będzie id: większe o 1
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
+        czy_jest_bomba_i_numer(nr_id + 1); //analizować będzie id: większe o 1
+        czy_jest_bomba_i_numer(nr_id + width_x); //analizować będzie id: większe o szerokość pola    
+        czy_jest_bomba_i_numer(nr_id + width_x + 1); //analizować będzie id: większe o szerokość pola
 
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id + width_x; //analizować będzie id: większe o szerokość pola
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id + width_x + 1; //analizować będzie id: większe o szerokość pola
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
     } else if (nr_id == width_x - 1) { // tutaj analizować będzie prawy górny róg,  id: mniejsze o 1, większe o width_x oraz większe o width_x - 1
-        nr_pomoc = nr_id - 1; //analizować będzie id: mniejsze o 1
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
+        czy_jest_bomba_i_numer(nr_id - 1); //analizować będzie id: mniejsze o 1    
+        czy_jest_bomba_i_numer(nr_id + width_x); //analizować będzie id: większe o width_x     
+        czy_jest_bomba_i_numer(nr_id + width_x - 1); //analizować będzie id: większe o width_x - 1 
 
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id + width_x; //analizować będzie id: większe o width_x
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id + width_x - 1; //analizować będzie id: większe o width_x - 1 
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
     } else if (nr_id == width_x * (height_y - 1)) { // tutaj analizować będzie lewy dolny róg,  id: większe o 1, mniejsze o width_x oraz mnijesze o width_x + 1     
+        czy_jest_bomba_i_numer(nr_id + 1);
+        czy_jest_bomba_i_numer(nr_id - width_x);
+        czy_jest_bomba_i_numer(nr_id - width_x + 1);
 
-        nr_pomoc = nr_id + 1; //analizować będzie id: mniejsze o 1
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id - width_x; //analizować będzie id: większe o width_x
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id - width_x + 1; //analizować będzie id: większe o width_x - 1 
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
     } else if (nr_id == width_x * height_y - 1) { // tutaj analizować będzie prawy dolny róg,  id: mniejsze o 1, mniejsze o width_x oraz mnijesze o width_x - 1     
-        nr_pomoc = nr_id - 1; //analizować będzie id: mniejsze o 1
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
+        czy_jest_bomba_i_numer(nr_id - 1);
+        czy_jest_bomba_i_numer(nr_id - width_x);
+        czy_jest_bomba_i_numer(nr_id - width_x - 1);
 
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
+    } else if (nr_id > 0 && nr_id < width_x - 1) {
+        czy_jest_bomba_i_numer(nr_id - 1);
+        czy_jest_bomba_i_numer(nr_id + 1);
+        czy_jest_bomba_i_numer(nr_id + width_x - 1);
+        czy_jest_bomba_i_numer(nr_id + width_x);
+        czy_jest_bomba_i_numer(nr_id + width_x + 1);
+    } else if (nr_id % width_x == 0) {
+        czy_jest_bomba_i_numer(nr_id + 1);
+        czy_jest_bomba_i_numer(nr_id - width_x + 1);
+        czy_jest_bomba_i_numer(nr_id - width_x);
+        czy_jest_bomba_i_numer(nr_id + width_x);
+        czy_jest_bomba_i_numer(nr_id + width_x + 1);
+    }else if ((nr_id + 1) % width_x == 0){
+		czy_jest_bomba_i_numer(nr_id - 1);
+        czy_jest_bomba_i_numer(nr_id - width_x - 1);
+        czy_jest_bomba_i_numer(nr_id - width_x);
+        czy_jest_bomba_i_numer(nr_id + width_x);
+        czy_jest_bomba_i_numer(nr_id + width_x - 1);
+	}else if (nr_id > width_x * (height_y - 1) && nr_id < width_x * height_y - 1){
+		czy_jest_bomba_i_numer(nr_id - 1);
+		czy_jest_bomba_i_numer(nr_id + 1);
+		czy_jest_bomba_i_numer(nr_id - width_x);
+		czy_jest_bomba_i_numer(nr_id - width_x - 1);
+		czy_jest_bomba_i_numer(nr_id - width_x + 1);
+	}else{
+		czy_jest_bomba_i_numer(nr_id - 1);
+		czy_jest_bomba_i_numer(nr_id + 1);
+		czy_jest_bomba_i_numer(nr_id - width_x);
+		czy_jest_bomba_i_numer(nr_id - width_x - 1);
+		czy_jest_bomba_i_numer(nr_id - width_x + 1);
+		czy_jest_bomba_i_numer(nr_id + width_x);
+		czy_jest_bomba_i_numer(nr_id + width_x - 1);
+		czy_jest_bomba_i_numer(nr_id + width_x + 1);
+	}
 
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id - width_x; //analizować będzie id: większe o width_x
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-
-        nr_pomoc = nr_id - width_x - 1; //analizować będzie id: większe o width_x - 1 
-        if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-            szukaj_pustych_pól(nr_pomoc);
-
-        } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0) {
-            document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-            document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-            document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        }
-    }
 
 
 }
