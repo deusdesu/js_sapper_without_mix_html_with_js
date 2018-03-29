@@ -1,4 +1,4 @@
-var ilosc_bomb = 130;
+var ilosc_bomb = 20;
 var czy_1_klikniecie = false;
 var klikniety_kafelek;
 var nr_pomoc;
@@ -109,14 +109,29 @@ function wyznacz_bomby(event) {
             }
             obiekt[unikat].bomba = obiekt[unikat].bomba + 1;
         }
-        wyznacz_numer();
-        umiesc_bomby(); //funkcja testowa
+        
+       // umiesc_bomby(); //funkcja testowa
         //modyfikuj_html();
-
+		wyznacz_numer()
     }
     czy_1_klikniecie = true;
-
-    szukaj_pustych_pol(klikniety_kafelek);
+	;
+	if(czy_kafel_to_bomba() == false){
+		szukaj_pustych_pol(klikniety_kafelek);
+		if(obiekt[klikniety_kafelek].numer != 0){
+			document.getElementById("id" + klikniety_kafelek).innerHTML = obiekt[klikniety_kafelek].numer;
+		}
+	}
+	// czy gra została wygrana
+	if(czy_wygrana() >= width_x * height_y - ilosc_bomb ){
+		alert("wygranko heheszki no c:");
+		for (i = 0; i < width_x * height_y; i++) {
+			if (obiekt[i].bomba == 1) {
+				document.getElementById("id" + i).style.backgroundColor = "green";
+			}
+		}
+	}
+	
 
 }
 
@@ -202,12 +217,12 @@ function czy_jest_bomba_i_numer(nr_pomoc) {
         szukaj_pustych_pol(nr_pomoc);
 
     } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0 && obiekt[nr_pomoc].stan == "default") { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
+		obiekt[nr_pomoc].stan = "wcisniety";
         document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
         document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
         document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
     }
 }
-
 
 function szukaj_pustych_pol(nr_id) {
     nr_id = nr_id / 1;
@@ -273,7 +288,25 @@ function szukaj_pustych_pol(nr_id) {
 
 }
 
+function czy_kafel_to_bomba(){
+	if(obiekt[klikniety_kafelek].bomba != 0){ //przegranko
+		for(i = 0; i < width_x * height_y; i++){
+			 document.getElementById("id" + i).removeEventListener("click", wyznacz_bomby);
+		}
+		umiesc_bomby();
+		alert("przegranko no :c");
+		return true;
+	}
+	else return false; // jeszcze nie przegranko
+}
 
+function czy_wygrana(){
+	 pomoc=0;
+	for(i=0;i<width_x * height_y;i++){
+		if( (obiekt[i].bomba == 0 && obiekt[i].stan != "default") || (obiekt[i].numer != 0 && obiekt[i].stan != "default"))pomoc++;
+	}
+	return pomoc;
+}
 /*
 	# .button == 2 aby zaznaczało frage, potem znak zapytania
 */
