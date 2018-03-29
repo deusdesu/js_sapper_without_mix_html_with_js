@@ -1,5 +1,7 @@
 body{
 	background-color: #666;
+	color: yellow;
+	
 }
 
 #conteiner{
@@ -33,6 +35,8 @@ body{
  /* -------------kafelki -----------------*/
 .defa1
 {
+		text-align:center;
+		line-height:15px;
 		width:15px;
 		height:15px;
 		background-color:#000;
