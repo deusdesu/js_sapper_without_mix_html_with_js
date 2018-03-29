@@ -1,4 +1,4 @@
-var ilosc_bomb = 20;
+var ilosc_bomb = 130;
 var czy_1_klikniecie = false;
 var klikniety_kafelek;
 var nr_pomoc;
@@ -14,7 +14,7 @@ function wielkosc_pola() {
     height_y = height_y / 1;
 
     //ilosc_bomb = (width_x * height_y) / 5; //10% z maksymalnej ilosci bomb
-    if (ilosc_bomb - 9 >= (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
+    if (ilosc_bomb - 9 > (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
     obiekt = [width_x * height_y];
     tablica_bomb = [width_x * height_y];
     for (i = 0; i < width_x * height_y; i++) {
@@ -99,7 +99,7 @@ function wyznacz_bomby(event) {
         for (i = 0; i < ilosc_bomb; i++) {
             for (w = 0; w < 2;) {
                 unikat = Math.floor(Math.random() * width_x * height_y + 0)
-                if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek && unikat != klikniety_kafelek - 1 && unikat != klikniety_kafelek - 11 && unikat != klikniety_kafelek - 10 && unikat != klikniety_kafelek - 9 && unikat != klikniety_kafelek + 1 && unikat != klikniety_kafelek + 9 && unikat != klikniety_kafelek + 10 && unikat != klikniety_kafelek + 11) {
+                if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek && unikat != klikniety_kafelek - 1 && unikat != klikniety_kafelek - width_x - 1 && unikat != klikniety_kafelek - width_x && unikat != klikniety_kafelek - width_x + 1 && unikat != klikniety_kafelek + 1 && unikat != klikniety_kafelek + width_x - 1 && unikat != klikniety_kafelek + width_x && unikat != klikniety_kafelek + width_x + 1) {
                     tablica_bomb[unikat] = tablica_bomb[unikat] + 1;
                     w = 4;
                     //break;
@@ -116,7 +116,7 @@ function wyznacz_bomby(event) {
     }
     czy_1_klikniecie = true;
 
-    szukaj_pustych_pól(klikniety_kafelek);
+    szukaj_pustych_pol(klikniety_kafelek);
 
 }
 
@@ -199,7 +199,7 @@ function czy_jest_bomba_i_numer(nr_pomoc) {
         obiekt[nr_pomoc].stan = "wcisniety";
         document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
         document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
-        szukaj_pustych_pól(nr_pomoc);
+        szukaj_pustych_pol(nr_pomoc);
 
     } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0 && obiekt[nr_pomoc].stan == "default") { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
         document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
@@ -209,7 +209,7 @@ function czy_jest_bomba_i_numer(nr_pomoc) {
 }
 
 
-function szukaj_pustych_pól(nr_id) {
+function szukaj_pustych_pol(nr_id) {
     nr_id = nr_id / 1;
 
 
@@ -275,39 +275,9 @@ function szukaj_pustych_pól(nr_id) {
 
 
 /*
-	na początku wypisuje pole kafelków
-	tworzy obiekty o takich samych właściwościach:
-	
-					obiekt[i] = {
-						stan: "default",
-						bomba: 0,
-						numer: ""
-					}
-					0 przy bomba oznacza, że nie ma bomby, 1, że jest, jeżeli ma wartość większą niż 1 to jest jakiś błąd w kodzie i polecam to sprawdzić XD
-					
-	wyznacza bomby, wyznaca numery, modyfikuje obiekty 
-	
-	wzorując się na obiektach zmienia innerHTML
-	
-	#rekurencja potrzebna
-	
 	# .button == 2 aby zaznaczało frage, potem znak zapytania
-	
-	
-	*/
+*/
 
 
 
 
-function rand(min, max) {
-    min = parseInt(min, 10);
-    max = parseInt(max, 10);
-
-    if (min > max) {
-        var tmp = min;
-        min = max;
-        max = tmp;
-    }
-
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
