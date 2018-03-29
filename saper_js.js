@@ -10,24 +10,26 @@ function wielkosc_pola() {
     czy_1_klikniecie = false;
     width_x = document.getElementById("width_x").value;
     width_x = width_x / 1;
-	if(width_x < 4) width_x = 4;
-	if(width_x > 35) width_x = 35;
-	//if(width_x >4) width_x = 4;
+	if(isNaN(width_x)) width_x=10; //jeżeli do formularza szerokość wpsize się np "chuj Ci w dupę :))))) " to szerokość ustawi się na 10 kafelków 
+	if(width_x < 4) width_x = 4; //zabezpieczenie przed zbyt małą wielkością
+	if(width_x > 35) width_x = 35;//zabezpieczenie przed zbyt dużą wielkością
 	
     height_y = document.getElementById("height_y").value;
     height_y = height_y / 1;
-	if(height_y < 4) height_y = 4;
-	if(height_y > 29) height_y = 29;
+	if(isNaN(height_y)) height_y=10; //jeżeli do formularza wysokość wpsize się np " czasem jestem sobie taki podróżnik, że wchodzę na słupy od prądu" to wysokość ustawi się na 10 kafelków 
+	if(height_y < 4) height_y = 4; //zabezpieczenie przed zbyt małą wielkością
+	if(height_y > 29) height_y = 29; //zabezpieczenie przed zbyt dużą wielkością
 	
 	if(document.getElementById("ilosc_bomb").value != 0){
 	ilosc_bomb = document.getElementById("ilosc_bomb").value;
 	ilosc_bomb = ilosc_bomb/1;
+	if(isNaN(ilosc_bomb)) ilosc_bomb = (width_x * height_y) / 5; //jeżeli do formularza szerokość wpsize się np " lubię grzesia szydłowskiego " to szerokość ustawi się na 10 kafelków 
+	
 	}
     //ilosc_bomb = (width_x * height_y) / 5; //10% z maksymalnej ilosci bomb
     if (ilosc_bomb  > (width_x * height_y) - 9){
 		ilosc_bomb = Math.floor((width_x * height_y) / 10);
 		//if(ilosc_bomb == 0) ilosc_bomb = 1;
-		//alert("jestem tutaj")
 	}
     obiekt = [width_x * height_y];
     tablica_bomb = [width_x * height_y];
@@ -65,7 +67,8 @@ function wielkosc_pola() {
 
     //przyznaje każdemu kafelkowi click wyznacz_bomby()
     for (i = 0; i < width_x * height_y; i++) {
-        document.getElementById("id" + i).addEventListener("click", wyznacz_bomby);
+        //document.getElementById("id" + i).addEventListener("click", wyznacz_bomby);
+        document.getElementById("id" + i).addEventListener("mousedown", wyznacz_bomby);
     }
 
     okresl_obiekty();
@@ -93,62 +96,79 @@ function okresl_obiekty() {
 
     }
 
-    //alert(obiekt[4].stan);
 
 }
 
 function wyznacz_bomby(event) {
 
-    klikniety_kafelek = event.target.id.slice(2); //id kliknietego elementu
-    klikniety_kafelek = klikniety_kafelek / 1;
+	
+	klikniety_kafelek = event.target.id.slice(2); //id kliknietego elementu
+	klikniety_kafelek = klikniety_kafelek / 1;
+	if(event.button == 0 && obiekt[klikniety_kafelek].stan != "flaga"){
+		obiekt[klikniety_kafelek].stan = "klikniety";
 
-    obiekt[klikniety_kafelek].stan = "klikniety";
+		document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#666";
 
-    document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#666";
+		if (czy_1_klikniecie == false) {
+			var unikat;
+			ilosc_powtorzen_w_petli = 0;
+			max_liczb_wysolowana = (width_x * height_y) - 1;
+			for (i = 0; i < ilosc_bomb; i++) {
+				for (w = 0; w < 2;) {
+					unikat = Math.floor(Math.random() * width_x * height_y + 0)
+					if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek && unikat != klikniety_kafelek - 1 && unikat != klikniety_kafelek - width_x - 1 && unikat != klikniety_kafelek - width_x && unikat != klikniety_kafelek - width_x + 1 && unikat != klikniety_kafelek + 1 && unikat != klikniety_kafelek + width_x - 1 && unikat != klikniety_kafelek + width_x && unikat != klikniety_kafelek + width_x + 1) {
+						tablica_bomb[unikat] = tablica_bomb[unikat] + 1;
+						w = 4;
+						//break;
+					}
+					ilosc_powtorzen_w_petli++;
 
-    if (czy_1_klikniecie == false) {
-        var unikat;
-        ilosc_powtorzen_w_petli = 0;
-        max_liczb_wysolowana = (width_x * height_y) - 1;
-        for (i = 0; i < ilosc_bomb; i++) {
-            for (w = 0; w < 2;) {
-                unikat = Math.floor(Math.random() * width_x * height_y + 0)
-                if (tablica_bomb[unikat] == 0 && unikat != klikniety_kafelek && unikat != klikniety_kafelek - 1 && unikat != klikniety_kafelek - width_x - 1 && unikat != klikniety_kafelek - width_x && unikat != klikniety_kafelek - width_x + 1 && unikat != klikniety_kafelek + 1 && unikat != klikniety_kafelek + width_x - 1 && unikat != klikniety_kafelek + width_x && unikat != klikniety_kafelek + width_x + 1) {
-                    tablica_bomb[unikat] = tablica_bomb[unikat] + 1;
-                    w = 4;
-                    //break;
-                }
-				ilosc_powtorzen_w_petli++;
-
-            }
-            obiekt[unikat].bomba = obiekt[unikat].bomba + 1;
-        }
-        
-       // umiesc_bomby(); //funkcja testowa
-        //modyfikuj_html();
-		wyznacz_numer()
-    }
-    czy_1_klikniecie = true;
-	;
-	if(czy_kafel_to_bomba() == false){
-		szukaj_pustych_pol(klikniety_kafelek);
-		if(obiekt[klikniety_kafelek].numer != 0){
-			document.getElementById("id" + klikniety_kafelek).innerHTML = obiekt[klikniety_kafelek].numer;
+				}
+				obiekt[unikat].bomba = obiekt[unikat].bomba + 1;
+			}
+			
+		   // umiesc_bomby(); //funkcja testowa
+			//modyfikuj_html();
+			wyznacz_numer()
 		}
-	}
-	// czy gra została wygrana
-	if(czy_wygrana() >= width_x * height_y - ilosc_bomb ){
-		//alert("wygranko heheszki no c:");
-		for (i = 0; i < width_x * height_y; i++) {
-			if (obiekt[i].bomba == 1) {
-				document.getElementById("id" + i).style.backgroundColor = "green";
+		czy_1_klikniecie = true;
+		;
+		if(czy_kafel_to_bomba() == false){
+			szukaj_pustych_pol(klikniety_kafelek);
+			if(obiekt[klikniety_kafelek].numer != 0){
+				document.getElementById("id" + klikniety_kafelek).innerHTML = obiekt[klikniety_kafelek].numer;
 			}
 		}
-		kasuj_addEventListener();
+		// czy gra została wygrana
+		if(czy_wygrana() >= width_x * height_y - ilosc_bomb ){
+			for (i = 0; i < width_x * height_y; i++) {
+				if (obiekt[i].bomba == 1) {
+					document.getElementById("id" + i).style.backgroundColor = "green";
+				}
+			}
+			kasuj_addEventListener();
+		}
 	}
 	
+	else if (event.button == 2) {
+		if (obiekt[klikniety_kafelek].stan == "default") {
+			document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "blue";
+			document.getElementById("id" + klikniety_kafelek).innerHTML="⚑";
+			obiekt[klikniety_kafelek].stan = "flaga";
+			
+		} else if (obiekt[klikniety_kafelek].stan == "flaga") {
+			document.getElementById("id" + klikniety_kafelek).innerHTML="?";
+			obiekt[klikniety_kafelek].stan = "question_mark";
+		} else if (obiekt[klikniety_kafelek].stan == "question_mark") {
+			document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#000";
+			document.getElementById("id" + klikniety_kafelek).innerHTML="";
+			obiekt[klikniety_kafelek].stan = "default";
+		}
 
+	}
 }
+
+
 
 function umiesc_bomby() { //funkcja testowa
     for (i = 0; i < width_x * height_y; i++) {
@@ -228,14 +248,14 @@ function czy_jest_bomba_i_numer(nr_pomoc) {
     if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer == 0 && obiekt[nr_pomoc].stan == "default") {
         obiekt[nr_pomoc].stan = "wcisniety";
         document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
-        document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        document.getElementById("id" + nr_pomoc).removeEventListener("mousedown", wyznacz_bomby);
         szukaj_pustych_pol(nr_pomoc);
 
     } else if (obiekt[nr_pomoc].bomba == 0 && obiekt[nr_pomoc].numer != 0 && obiekt[nr_pomoc].stan == "default") { //jeżeli id "nr_id + 1" nie ma bomby ale ma numer to kafel staje się szary, usuwa mu event click brak rekurencji. (w saperze po kliknęciu odsłąniane są pola aż do pola z numerkiem ;) )
 		obiekt[nr_pomoc].stan = "wcisniety";
         document.getElementById("id" + nr_pomoc).style.backgroundColor = "#666";
         document.getElementById("id" + nr_pomoc).innerHTML = obiekt[nr_pomoc].numer;
-        document.getElementById("id" + nr_pomoc).removeEventListener("click", wyznacz_bomby);
+        document.getElementById("id" + nr_pomoc).removeEventListener("mousedown", wyznacz_bomby);
     }
 }
 
@@ -307,7 +327,6 @@ function czy_kafel_to_bomba(){
 	if(obiekt[klikniety_kafelek].bomba != 0){ //przegranko
 		kasuj_addEventListener();
 		umiesc_bomby();
-		//alert("przegranko no :c");
 		return true;
 	}
 	else return false; // jeszcze nie przegranko
@@ -316,18 +335,24 @@ function czy_kafel_to_bomba(){
 function czy_wygrana(){
 	 pomoc=0;
 	for(i=0;i<width_x * height_y;i++){
-		if( (obiekt[i].bomba == 0 && obiekt[i].stan != "default") || (obiekt[i].numer != 0 && obiekt[i].stan != "default"))pomoc++;
+		if( (obiekt[i].bomba == 0 && obiekt[i].stan != "default" && obiekt[i].stan != "flaga") || (obiekt[i].numer != 0 && obiekt[i].stan != "default" && obiekt[i].stan != "flaga"))pomoc++;
 	}
 	return pomoc;
 }
 
 function kasuj_addEventListener(){
 	for(i = 0; i < width_x * height_y; i++){
-			 document.getElementById("id" + i).removeEventListener("click", wyznacz_bomby);
+			 document.getElementById("id" + i).removeEventListener("mousedown", wyznacz_bomby);
 		}
 }
+
+// Disable the right click button's menu.
+function pressRightClick() { return false; } 
+document.getElementById("pole_sapera").oncontextmenu = pressRightClick;
+
+
 /*
-	# .button == 2 aby zaznaczało frage, potem znak zapytania
+	# .button == 2 aby zaznaczało frage, potem znak zapytania, nie mogą być one kliknięte 
 */
 
 
