@@ -10,11 +10,25 @@ function wielkosc_pola() {
     czy_1_klikniecie = false;
     width_x = document.getElementById("width_x").value;
     width_x = width_x / 1;
+	if(width_x < 4) width_x = 4;
+	if(width_x > 35) width_x = 35;
+	//if(width_x >4) width_x = 4;
+	
     height_y = document.getElementById("height_y").value;
     height_y = height_y / 1;
-
+	if(height_y < 4) height_y = 4;
+	if(height_y > 29) height_y = 29;
+	
+	if(document.getElementById("ilosc_bomb").value != 0){
+	ilosc_bomb = document.getElementById("ilosc_bomb").value;
+	ilosc_bomb = ilosc_bomb/1;
+	}
     //ilosc_bomb = (width_x * height_y) / 5; //10% z maksymalnej ilosci bomb
-    if (ilosc_bomb - 9 > (width_x * height_y)) ilosc_bomb = (width_x * height_y) / 10;
+    if (ilosc_bomb  > (width_x * height_y) - 9){
+		ilosc_bomb = Math.floor((width_x * height_y) / 10);
+		//if(ilosc_bomb == 0) ilosc_bomb = 1;
+		//alert("jestem tutaj")
+	}
     obiekt = [width_x * height_y];
     tablica_bomb = [width_x * height_y];
     for (i = 0; i < width_x * height_y; i++) {
@@ -124,12 +138,13 @@ function wyznacz_bomby(event) {
 	}
 	// czy gra została wygrana
 	if(czy_wygrana() >= width_x * height_y - ilosc_bomb ){
-		alert("wygranko heheszki no c:");
+		//alert("wygranko heheszki no c:");
 		for (i = 0; i < width_x * height_y; i++) {
 			if (obiekt[i].bomba == 1) {
 				document.getElementById("id" + i).style.backgroundColor = "green";
 			}
 		}
+		kasuj_addEventListener();
 	}
 	
 
@@ -290,11 +305,9 @@ function szukaj_pustych_pol(nr_id) {
 
 function czy_kafel_to_bomba(){
 	if(obiekt[klikniety_kafelek].bomba != 0){ //przegranko
-		for(i = 0; i < width_x * height_y; i++){
-			 document.getElementById("id" + i).removeEventListener("click", wyznacz_bomby);
-		}
+		kasuj_addEventListener();
 		umiesc_bomby();
-		alert("przegranko no :c");
+		//alert("przegranko no :c");
 		return true;
 	}
 	else return false; // jeszcze nie przegranko
@@ -306,6 +319,12 @@ function czy_wygrana(){
 		if( (obiekt[i].bomba == 0 && obiekt[i].stan != "default") || (obiekt[i].numer != 0 && obiekt[i].stan != "default"))pomoc++;
 	}
 	return pomoc;
+}
+
+function kasuj_addEventListener(){
+	for(i = 0; i < width_x * height_y; i++){
+			 document.getElementById("id" + i).removeEventListener("click", wyznacz_bomby);
+		}
 }
 /*
 	# .button == 2 aby zaznaczało frage, potem znak zapytania
