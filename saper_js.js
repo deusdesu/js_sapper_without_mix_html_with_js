@@ -13,8 +13,9 @@ function wielkosc_pola() {
     ilosc_klikniec = 0;
     document.getElementById("il_klikniec").innerHTML = "";
     czy_1_klikniecie_stopera = false;
-    stoper_stop = false;
+    
     stopper();
+    stoper_stop = false;
     width_x = document.getElementById("width_x").value;
     width_x = width_x / 1;
     if (isNaN(width_x)) width_x = 10; //jeżeli do formularza szerokość wpsize się np "chuj Ci w dupę :))))) " to szerokość ustawi się na 10 kafelków
@@ -352,7 +353,7 @@ function stopper() {
         sek0 = 0;
         time = min1 + "" + min0 + ":" + sek1 + "" + sek0;
         // alert(time);
-    } else if (czy_1_klikniecie_stopera == true) {
+    } else  {
         sek0++;
         if (sek0 > 9) {
             sek0 = 0;
@@ -370,10 +371,10 @@ function stopper() {
 
     
 
-
+    document.getElementById("stopper").innerHTML = time;
     time = min1 + "" + min0 + ":" + sek1 + "" + sek0;
     //if(time == "03:99")
-    document.getElementById("stopper").innerHTML = time;
+    
     if (stoper_stop && czy_1_klikniecie_stopera == true) {
         setTimeout("stopper()", 1000);
     }
