@@ -5,10 +5,12 @@ var klikniety_kafelek;
 var nr_pomoc;
 var stoper_stop = true;
 var ilosc_klikniec = 0;
+var przegrana = false;
 document.getElementById("pole_sapera").oncontextmenu = pressRightClick;
 document.getElementById("input_button").addEventListener("click", wielkosc_pola);
 
 function wielkosc_pola() {
+    przegrana = false;
     czy_1_klikniecie = false;
     ilosc_klikniec = 0;
     document.getElementById("il_klikniec").innerHTML = "";
@@ -128,12 +130,12 @@ function wyznacz_bomby(event) {
             stopper();
         }
         czy_1_klikniecie = true;;
-        if (czy_kafel_to_bomba() == false) {
-            szukaj_pustych_pol(klikniety_kafelek);
-            if (obiekt[klikniety_kafelek].numer != 0) {
-                document.getElementById("id" + klikniety_kafelek).innerHTML = obiekt[klikniety_kafelek].numer;
-            }
-        }
+                if (czy_kafel_to_bomba() == false) {
+                    szukaj_pustych_pol(klikniety_kafelek);
+                    if (obiekt[klikniety_kafelek].numer != 0) {
+                        document.getElementById("id" + klikniety_kafelek).innerHTML = obiekt[klikniety_kafelek].numer;
+                    }
+                }
         // czy gra została wygrana
         if (czy_wygrana() >= width_x * height_y - ilosc_bomb) {
             for (i = 0; i < width_x * height_y; i++) {
@@ -145,6 +147,9 @@ function wyznacz_bomby(event) {
             stoper_stop = false;
             document.getElementById("il_klikniec").innerHTML = "ilosc klikniec: " + ilosc_klikniec;
         }
+
+        
+
     } else if (event.button == 2) {
         if (obiekt[klikniety_kafelek].stan == "default") {
             //document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "blue";
@@ -318,11 +323,13 @@ function czy_kafel_to_bomba() {
         kasuj_addEventListener();
         umiesc_bomby();
         stoper_stop = false;
+        przegrana = true;
         return true;
     } else return false; // jeszcze nie przegranko
 }
 
 function czy_wygrana() {
+    if(przegrana == true) return 0;
     pomoc = 0;
     for (i = 0; i < width_x * height_y; i++) {
         if ((obiekt[i].bomba == 0 && obiekt[i].stan != "default" && obiekt[i].stan != "flaga" && obiekt[i].stan != "question_mark"  ) || (obiekt[i].numer != 0 && obiekt[i].stan != "default" && obiekt[i].stan != "flaga"  && obiekt[i].stan != "question_mark" )) pomoc++;
