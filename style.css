@@ -1,7 +1,6 @@
 body{
 	background-color: #666;
 	color: yellow;
-	
 }
 
 #conteiner{
@@ -10,7 +9,6 @@ body{
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #888;
-	
 }
 #pole_na_dane{
 	height: 100%;
@@ -40,7 +38,7 @@ body{
 		width:15px;
 		height:15px;
 		background-color:#000;
-		border:1px solid #555;
+		border:1px outset #555;
 		float:left;			
 }
 

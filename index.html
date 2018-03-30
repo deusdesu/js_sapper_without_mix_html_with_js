@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang='pl'>
-  <head>
+
+<head>
     <title>hopla w przepaść</title>
     <meta charset='utf-8'>
     <meta name='description' content=''>
@@ -10,24 +11,28 @@
     <!-- <meta http-equiv='X-UA-Compatible' content='IE=edge'> -->
     <link href='/favicon.png' rel='shortcut icon' type='image/png'>
     <link rel="stylesheet" href="style.css" type="text/css" />
-    
-  </head>
-  <body>
-	<div id="conteiner">
-	<div id="pole_z_opcjami">wstawić inputy na ilosc bomb i rozmiary pola
-			
-			 <input id="ilosc_bomb" placeholder="ilość bomb" onfocus="this.placeholder=''" onblur="this.placeholder='ilość bomb'" /> 
-			<input id="width_x" placeholder="width_x max. 35" onfocus="this.placeholder=''" onblur="this.placeholder='width_x max. 35'"/>
-			<input id="height_y" placeholder="height_y max. 29" onfocus="this.placeholder=''" onblur="this.placeholder='height_y max. 29'"/>
-			<input id="input_button" type="submit" value="wyślij!"  />
-		</div>
-		
-		<div id="pole_sapera">
-			<div id="tu_wstaw_kafelki_sapera"></div>
-		</div>
-		<div id="pole_na_dane"></div>
-	</div>
-		 <script type="text/javascript" src="saper_js.js"></script> 
 
-  </body>
+</head>
+
+<body>
+    <div id="conteiner">
+        <div id="pole_z_opcjami">wstawić inputy na ilosc bomb i rozmiary pola
+            <input id="ilosc_bomb" placeholder="ilość bomb" onfocus="this.placeholder=''" onblur="this.placeholder='ilość bomb'" />
+            <input id="width_x" placeholder="width_x max. 35" onfocus="this.placeholder=''" onblur="this.placeholder='width_x max. 35'" />
+            <input id="height_y" placeholder="height_y max. 29" onfocus="this.placeholder=''" onblur="this.placeholder='height_y max. 29'" />
+            <input id="input_button" type="submit" value="wyślij!" />
+        </div>
+
+        <div id="pole_sapera">
+            <div id="tu_wstaw_kafelki_sapera"></div>
+        </div>
+        <div id="pole_na_dane">
+            <div id="stopper"></div>
+            <div id="il_klikniec"></div>
+        </div>
+    </div>
+    <script type="text/javascript" src="saper_js.js"></script>
+
+</body>
+
 </html>
