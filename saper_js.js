@@ -358,32 +358,42 @@ function stopper() {
         min0 = 0;
         sek1 = 0;
         sek0 = 0;
-        time = min1 + "" + min0 + ":" + sek1 + "" + sek0;
+        msek1 = 0;
+        msek0 = 0;
+        time = min1 + "" + min0 + ":" + sek1 + "" + sek0 + ":" + msek1 + "" + msek0;
         // alert(time);
     } else  {
-        sek0++;
-        if (sek0 > 9) {
-            sek0 = 0;
-            sek1++;
-            if (sek1 > 6) {
-                sek1 = 0;
-                min0++;
-                if (min0 > 9) {
-                    min0 = 0;
-                    min1++;
+        msek0++;
+        if(msek0 > 9){
+            msek0 = 0;
+            msek1++;
+            if(msek1 > 6){
+                msek1 = 0;
+                sek0++;
+                if (sek0 > 9) {
+                    sek0 = 0;
+                    sek1++;
+                    if (sek1 > 6) {
+                        sek1 = 0;
+                        min0++;
+                        if (min0 > 9) {
+                            min0 = 0;
+                            min1++;
+                        }
+                    }
                 }
-            }
+            }    
         }
     }
 
     
 
     document.getElementById("stopper").innerHTML = time;
-    time = min1 + "" + min0 + ":" + sek1 + "" + sek0;
+    time = min1 + "" + min0 + ":" + sek1 + "" + sek0 + ":" + msek1 + "" + msek0;
     //if(time == "03:99")
     
     if (stoper_stop && czy_1_klikniecie_stopera == true) {
-        setTimeout("stopper()", 1000);
+        setTimeout("stopper()", 10);
     }
     czy_1_klikniecie_stopera = true;
 }

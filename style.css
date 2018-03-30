@@ -47,3 +47,17 @@ body{
 	margin-right: auto;
 	margin-left: auto;
 }
+
+#stopper{
+	font-family: 'Roboto', sans-serif;
+	font-size: 40px;
+	text-align:center;
+	height: 50px;
+}
+
+#il_klikniec{
+	font-size: 20px;
+	text-align:center;
+	border-top: 10px solid black;
+	padding-top: 10px;
+}
