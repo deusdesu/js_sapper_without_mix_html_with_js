@@ -1,4 +1,5 @@
 var ilosc_bomb = 20;
+var ilosc_flag = 0;
 var czy_1_klikniecie = false;
 var czy_1_klikniecie_stopera = false;
 var klikniety_kafelek;
@@ -6,16 +7,23 @@ var nr_pomoc;
 var stoper_stop = true;
 var ilosc_klikniec = 0;
 var przegrana = false;
+
+// wpisuje defaultowe dane do diva po prawej stronie
 document.getElementById("pole_sapera").oncontextmenu = pressRightClick;
 document.getElementById("input_button").addEventListener("click", wielkosc_pola);
-
+document.getElementById("il_flag").innerHTML = "ilosc flag: ";
+document.getElementById("il_klikniec").innerHTML = "ilosc klikniec: ";
+document.getElementById("il_bomb").innerHTML = "Ilosc bomb: ";
+document.getElementById("stopper").innerHTML = "00:00:00";
 function wielkosc_pola() {
     przegrana = false;
     czy_1_klikniecie = false;
     ilosc_klikniec = 0;
-    document.getElementById("il_klikniec").innerHTML = "";
     czy_1_klikniecie_stopera = false;
-    
+    ilosc_flag = 0;
+    document.getElementById("il_flag").innerHTML = "ilosc flag: ";
+    document.getElementById("il_klikniec").innerHTML = "ilosc klikniec: "
+    //document.getElementById("il_bomb").innerHTML = "Ilosc bomb: ";
     stopper();
     stoper_stop = false;
     width_x = document.getElementById("width_x").value;
@@ -41,6 +49,9 @@ function wielkosc_pola() {
         ilosc_bomb = Math.floor((width_x * height_y) / 10);
         //if(ilosc_bomb == 0) ilosc_bomb = 1;
     }
+    document.getElementById("il_bomb").innerHTML = "Ilosc bomb: " + ilosc_bomb; // pokazuje w menu po prawej stronie ile jest bomb
+
+
     obiekt = [width_x * height_y];
     tablica_bomb = [width_x * height_y];
     for (i = 0; i < width_x * height_y; i++) {
@@ -103,10 +114,11 @@ function wyznacz_bomby(event) {
     if (event.button == 0 && obiekt[klikniety_kafelek].stan != "flaga") {
         obiekt[klikniety_kafelek].stan = "klikniety";
         ilosc_klikniec++;
+        document.getElementById("il_klikniec").innerHTML = "ilosc klikniec: " + ilosc_klikniec;
         document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#666";
 
         if (czy_1_klikniecie == false) {
-            
+
             stoper_stop = true;
             var unikat;
             ilosc_powtorzen_w_petli = 0;
@@ -148,17 +160,24 @@ function wyznacz_bomby(event) {
             document.getElementById("il_klikniec").innerHTML = "ilosc klikniec: " + ilosc_klikniec;
         }
 
-        
+
 
     } else if (event.button == 2) {
         if (obiekt[klikniety_kafelek].stan == "default") {
             //document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "blue";
-            document.getElementById("id" + klikniety_kafelek).innerHTML = "⚑";
-            obiekt[klikniety_kafelek].stan = "flaga";
+                                                                   //zwiększa ilosc flag
+            if(ilosc_flag < ilosc_bomb){
+                ilosc_flag++;
+                document.getElementById("il_flag").innerHTML = "ilosc flag: " + ilosc_flag;
+                document.getElementById("id" + klikniety_kafelek).innerHTML = "⚑";  //wsadza w klikniety PPM flage
+                obiekt[klikniety_kafelek].stan = "flaga";
+            }
 
         } else if (obiekt[klikniety_kafelek].stan == "flaga") {
             document.getElementById("id" + klikniety_kafelek).innerHTML = "?";
             obiekt[klikniety_kafelek].stan = "question_mark";
+            ilosc_flag--;                                                       //zmniejsza ilosc flag
+            document.getElementById("il_flag").innerHTML = "ilosc flag: " + ilosc_flag;
         } else if (obiekt[klikniety_kafelek].stan == "question_mark") {
             //document.getElementById("id" + klikniety_kafelek).style.backgroundColor = "#000";
             document.getElementById("id" + klikniety_kafelek).innerHTML = "";
@@ -257,6 +276,7 @@ function czy_jest_bomba_i_numer(nr_pomoc) {
     }
 }
 
+
 function szukaj_pustych_pol(nr_id) {
     nr_id = nr_id / 1;
 
@@ -348,8 +368,6 @@ function pressRightClick() {
     return false;
 }
 
-
-
 function stopper() {
     // wywołać ja potem
 
@@ -382,16 +400,16 @@ function stopper() {
                         }
                     }
                 }
-            }    
+            }
         }
     }
 
-    
+
 
     document.getElementById("stopper").innerHTML = time;
     time = min1 + "" + min0 + ":" + sek1 + "" + sek0 + ":" + msek1 + "" + msek0;
     //if(time == "03:99")
-    
+
     if (stoper_stop && czy_1_klikniecie_stopera == true) {
         setTimeout("stopper()", 10);
     }
@@ -405,3 +423,4 @@ function stopper() {
 
     # ilosc bomb zmiejszana o 1 za kazdym razem, gdy tworzona jest flaga (zwiększana za każdym razem, gdy usuwa się flagę)
 */
+
